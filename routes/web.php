@@ -1,37 +1,31 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController; // <-- Panggil Controller Admin
+use App\Models\Project;
+use App\Models\Skill;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
-
+// HALAMAN DEPAN (PUBLIC)
 Route::get('/', function () {
-    return view('layout.home', ['title' => 'Home']);
+    return view('welcome', [
+        'projects' => Project::all(), // Kirim data project ke depan
+        'skills' => Skill::all()      // Kirim data skill ke depan
+    ]);
 });
 
-Route::get('/home', function () {
-    return view('layout.home', ['title' => 'Home']);
+// HALAMAN ADMIN (DASHBOARD) - HANYA BISA DIAKSES KALAU LOGIN
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// GROUPING ROUTE ADMIN (Biar rapi)
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Nanti kita tambah route CRUD Project di sini
 });
 
-Route::get('/about', function () {
-    return view('layout.about', ['title' => 'About Me']);
-});
-
-Route::get('/skills', function () {
-    return view('layout.skills', ['title' => 'Skills']);
-});
-
-Route::get('/certificates', function () {
-    return view('layout.certificates', ['title' => 'Sertifikat']);
-});
-
-Route::get('/contact', function () {
-    return view('layout.kontak', ['title' => 'Hubungi Saya']);
-});
-
-Route::get('/projects', function () {
-    return view('layout.projects', ['title' => 'Proyek']);
-});
+require __DIR__.'/auth.php';
