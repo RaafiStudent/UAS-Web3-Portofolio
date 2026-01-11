@@ -1,29 +1,38 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProjectController; // <--- JANGAN LUPA INI DITAMBAHKAN
+use App\Http\Controllers\ProjectController; 
 use App\Models\Project;
 use App\Models\Skill;
 use Illuminate\Support\Facades\Route;
 
+// ==========================================
+// HALAMAN DEPAN (PUBLIC)
+// ==========================================
 Route::get('/', function () {
-    return view('welcome', [
-        'projects' => Project::all(),
-        'skills' => Skill::all()
+    // KITA UBAH 'welcome' JADI 'layout.home' SESUAI FOLDER BOSS
+    return view('layout.home', [
+        'projects' => Project::all(), // Kirim data project ke halaman home
+        'skills' => Skill::all()      // Kirim data skill ke halaman home
     ]);
 });
 
+// ==========================================
+// HALAMAN ADMIN (DASHBOARD)
+// ==========================================
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// GROUP ADMIN
+// ==========================================
+// GROUP ADMIN (BUTUH LOGIN)
+// ==========================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD PROJECTS (Baris Sakti ini Boss!)
+    // CRUD PROJECTS
     Route::resource('projects', ProjectController::class);
 });
 
