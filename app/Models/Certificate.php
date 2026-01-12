@@ -11,10 +11,11 @@ class Certificate extends Model
 
     // WAJIB DITAMBAHKAN BIAR BISA SIMPAN DATA
     protected $fillable = [
-        'title', 
-        'issuer', 
-        'issued_at', 
-        'description', 
-        'image'
+       'title',
+        'image',
+        'description',
+        'issuer',
+        'link',
+        'date', // <--- JANGAN LUPA TAMBAHKAN INI
     ];
 }
