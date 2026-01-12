@@ -2,63 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Skill;
 use Illuminate\Http\Request;
 
 class SkillController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // 1. DAFTAR SKILL
     public function index()
     {
-        //
+        $skills = Skill::all();
+        return view('admin.skills.index', compact('skills'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // 2. FORM TAMBAH
     public function create()
     {
-        //
+        return view('admin.skills.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // 3. SIMPAN DATA
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'color' => 'required|string|max:50', // Misal: 'blue', 'red', '#FF0000'
+        ]);
+
+        Skill::create($request->all());
+
+        return redirect()->route('skills.index')->with('success', 'Skill berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    // 4. FORM EDIT
+    public function edit(Skill $skill)
     {
-        //
+        return view('admin.skills.edit', compact('skill'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    // 5. UPDATE DATA
+    public function update(Request $request, Skill $skill)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'color' => 'required|string|max:50',
+        ]);
+
+        $skill->update($request->all());
+
+        return redirect()->route('skills.index')->with('success', 'Skill berhasil diperbarui!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    // 6. HAPUS DATA
+    public function destroy(Skill $skill)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $skill->delete();
+        return redirect()->route('skills.index')->with('success', 'Skill berhasil dihapus!');
     }
 }
