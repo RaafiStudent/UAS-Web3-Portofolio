@@ -60,13 +60,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD Projects (Admin Panel)
-    Route::resource('admin/projects', ProjectController::class)->names([
-        'index' => 'projects.index',
-        'create' => 'projects.create',
-        'store' => 'projects.store',
-        // dll...
-    ]);
+    // CRUD PROJECTS
+    Route::resource('projects', ProjectController::class);
+
+    // CRUD SKILLS (Baru Tambah Ini)
+    Route::resource('skills', \App\Http\Controllers\SkillController::class);
 });
 
 require __DIR__.'/auth.php';
