@@ -10,10 +10,7 @@ class Project extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'slug',
-        'image',
-        'description',
-        'link',
-    ];
+    'title', 'slug', 'image', 'description', 'link', 
+    'date', 'technologies' // <-- TAMBAHAN BARU
+];
 }
