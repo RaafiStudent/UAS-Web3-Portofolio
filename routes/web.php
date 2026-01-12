@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ContactController; // <--- JANGAN LUPA INI
 use App\Models\Project;
 use App\Models\Skill;
 use App\Models\Certificate;
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('layout.home', [
-        // Project urut tanggal (Terbaru ke Terlama)
         'projects' => Project::orderBy('date', 'desc')->get(), 
         'skills' => Skill::all()
     ]);
@@ -30,32 +30,33 @@ Route::get('/skills', function () {
 })->name('skills');
 
 Route::get('/projects-list', function () { 
-    // Halaman list project urut tanggal
     return view('layout.projects', ['projects' => Project::orderBy('date', 'desc')->get()]); 
 })->name('projects');
 
 Route::get('/certificates', function () { 
-    // PERUBAHAN PENTING DISINI:
-    // Sertifikat sekarang diurutkan berdasarkan kolom 'date' (Terbaru ke Terlama)
-    // Bukan lagi berdasarkan waktu upload (latest)
     return view('layout.certificates', ['certificates' => Certificate::orderBy('date', 'desc')->get()]); 
 })->name('certificates');
 
+// --- ROUTE KONTAK DIPERBARUI ---
 Route::get('/contact', function () { 
     return view('layout.kontak'); 
 })->name('contact');
+
+// Route untuk Proses Kirim Pesan (POST)
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 
 // ==========================================
 // HALAMAN ADMIN (DASHBOARD)
 // ==========================================
 Route::get('/dashboard', function () {
-    // Hitung jumlah data untuk statistik dashboard
     $totalProjects = Project::count();
     $totalSkills = Skill::count();
     $totalCertificates = Certificate::count();
+    // Hitung pesan masuk juga (Opsional)
+    $totalMessages = \App\Models\Contact::count();
 
-    return view('dashboard', compact('totalProjects', 'totalSkills', 'totalCertificates'));
+    return view('dashboard', compact('totalProjects', 'totalSkills', 'totalCertificates', 'totalMessages'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -63,10 +64,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD ADMIN (Resource Routes)
+    // CRUD ADMIN
     Route::resource('admin/projects', ProjectController::class)->names('projects');
     Route::resource('admin/skills', SkillController::class)->names('skills');
     Route::resource('admin/certificates', CertificateController::class)->names('certificates');
+
+    // ROUTE ADMIN PESAN MASUK
+    Route::get('/admin/messages', [ContactController::class, 'index'])->name('admin.contacts');
+    Route::delete('/admin/messages/{id}', [ContactController::class, 'destroy'])->name('admin.contacts.destroy');
 });
 
 require __DIR__.'/auth.php';
