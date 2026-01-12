@@ -1,73 +1,63 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-cyan-400 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit Sertifikat') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-gray-800 border border-gray-700 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                
-                {{-- Form Edit --}}
-                <form action="{{ route('certificates.update', $certificate->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT') {{-- Wajib untuk Update Data --}}
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    
+                    <form method="POST" action="{{ route('certificates.update', $certificate->id) }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
 
-                    {{-- Judul --}}
-                    <div class="mb-6">
-                        <label class="block text-gray-300 text-sm font-bold mb-2">Judul Sertifikat</label>
-                        <input type="text" name="title" value="{{ $certificate->title }}"
-                            class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400" required>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                        {{-- Penyelenggara --}}
-                        <div>
-                            <label class="block text-gray-300 text-sm font-bold mb-2">Penyelenggara (Issuer)</label>
-                            <input type="text" name="issuer" value="{{ $certificate->issuer }}"
-                                class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400" required>
-                        </div>
-                        
-                        {{-- Tanggal --}}
-                        <div>
-                            <label class="block text-gray-300 text-sm font-bold mb-2">Tanggal / Periode</label>
-                            <input type="text" name="issued_at" value="{{ $certificate->issued_at }}"
-                                class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400" required>
-                        </div>
-                    </div>
-
-                    {{-- Deskripsi --}}
-                    <div class="mb-6">
-                        <label class="block text-gray-300 text-sm font-bold mb-2">Deskripsi Singkat</label>
-                        <textarea name="description" rows="3" 
-                            class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-cyan-400" required>{{ $certificate->description }}</textarea>
-                    </div>
-
-                    {{-- Gambar --}}
-                    <div class="mb-6">
-                        <label class="block text-gray-300 text-sm font-bold mb-2">Ganti Gambar (Opsional)</label>
-                        
-                        {{-- Preview Gambar Lama --}}
-                        <div class="mb-3">
-                            <p class="text-xs text-gray-500 mb-1">Gambar saat ini:</p>
-                            <img src="{{ asset('storage/' . $certificate->image) }}" class="w-32 h-auto rounded border border-gray-600">
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Nama Sertifikat</label>
+                            <input type="text" name="title" value="{{ old('title', $certificate->title) }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
                         </div>
 
-                        <input type="file" name="image" 
-                            class="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-gray-300 focus:outline-none focus:border-cyan-400 file:bg-cyan-500 file:text-gray-900 file:font-bold file:border-0 file:rounded hover:file:bg-cyan-600">
-                        <p class="text-gray-500 text-xs mt-1">*Biarkan kosong jika tidak ingin mengubah gambar.</p>
-                    </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Tanggal Terbit</label>
+                            <input type="date" name="date" value="{{ old('date', $certificate->date) }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                        </div>
 
-                    {{-- Tombol --}}
-                    <div class="flex items-center gap-4">
-                        <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-6 rounded shadow-lg transition transform hover:scale-105">
-                            Update Sertifikat
-                        </button>
-                        <a href="{{ route('certificates.index') }}" class="text-gray-400 hover:text-white">Batal</a>
-                    </div>
-                </form>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Penerbit (Issuer)</label>
+                            <input type="text" name="issuer" value="{{ old('issuer', $certificate->issuer) }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
 
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Gambar (Kosongkan jika tidak ingin ganti)</label>
+                            <input type="file" name="image" class="w-full rounded-md border border-gray-300 p-2">
+                            @if($certificate->image)
+                                <div class="mt-2">
+                                    <p class="text-sm text-gray-500">Gambar Saat Ini:</p>
+                                    <img src="{{ asset('storage/' . $certificate->image) }}" alt="Current Image" class="h-20 w-auto rounded">
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Link Kredensial</label>
+                            <input type="url" name="link" value="{{ old('link', $certificate->link) }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Deskripsi</label>
+                            <textarea name="description" rows="4" class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>{{ old('description', $certificate->description) }}</textarea>
+                        </div>
+
+                        <div class="flex items-center justify-end mt-4">
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                                Update Sertifikat
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
             </div>
         </div>
     </div>
