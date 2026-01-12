@@ -21,11 +21,12 @@
                 </div>
             </div>
             
-            {{-- FOTO PROFIL (Ganti src-nya sesuai foto Boss) --}}
-            <div class="md:w-1/2 flex justify-center mb-10 md:mb-0">
+            {{-- FOTO PROFIL (SUDAH DIPERBAIKI) --}}
+            {{-- Pastikan file 'foto-about.jpg' ada di folder 'public/images/' --}}
+            <div class="md:w-1/2 flex justify-center mb-10 md:mb-0"> {{-- Typo 'jaustify' sudah dibenerin jadi 'justify' --}}
                 <div class="relative w-64 h-64 md:w-80 md:h-80">
                     <div class="absolute inset-0 bg-cyan-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
-                    <img src="{{ asset('images/me.jpg') }}" alt="Profile" class="relative w-full h-full object-cover rounded-full border-4 border-gray-800 shadow-2xl">
+                    <img src="{{ asset('images/foto-about.jpg') }}" alt="Profile" class="relative w-full h-full object-cover rounded-full border-4 border-gray-800 shadow-2xl">
                 </div>
             </div>
         </div>
@@ -44,7 +45,6 @@
 
             <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-6">
                 @foreach ($skills->take(6) as $skill) 
-                {{-- Kita cuma ambil 6 skill buat di Home biar gak kepanjangan --}}
                     <div class="bg-[#0B0F19] p-4 rounded-xl border border-gray-700 flex flex-col items-center justify-center hover:border-cyan-500 transition duration-300 group"
                          style="border-color: {{ $skill->color }}">
                         @if($skill->image)
@@ -71,7 +71,6 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ($projects->take(3) as $project)
-                {{-- Kita cuma ambil 3 project buat di Home --}}
                     <div class="bg-[#141822] rounded-xl overflow-hidden border border-gray-700 hover:border-cyan-500/50 transition duration-300 group">
                         <div class="h-48 overflow-hidden relative">
                             <img src="{{ asset('storage/' . $project->image) }}" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500">
