@@ -32,14 +32,20 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// ==========================================
+// GROUP ADMIN (BUTUH LOGIN)
+// ==========================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD ADMIN
+    // CRUD PROJECTS (Nama rutenya: projects.index, projects.create, dll)
     Route::resource('admin/projects', ProjectController::class)->names('projects');
-    Route::resource('admin/skills', SkillController::class)->names('skills_admin');
+
+    // CRUD SKILLS (Nama rutenya KITA PAKSA jadi: skills.index, skills.create, dll)
+    // Supaya cocok dengan panggilan di navigation.blade.php
+    Route::resource('admin/skills', SkillController::class)->names('skills');
 });
 
 require __DIR__.'/auth.php';
