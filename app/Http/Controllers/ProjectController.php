@@ -12,7 +12,9 @@ class ProjectController extends Controller
     // 1. TAMPILKAN DAFTAR (INDEX)
     public function index()
     {
-        $projects = Project::all();
+        // LOGIKA UTAMA: Urutkan berdasarkan kolom 'date' dari TERBARU ke TERLAMA
+        $projects = Project::orderBy('date', 'desc')->paginate(10);
+
         return view('admin.projects.index', compact('projects'));
     }
 
@@ -25,31 +27,29 @@ class ProjectController extends Controller
     // 3. SIMPAN DATA BARU (STORE)
     public function store(Request $request)
     {
-        // Validasi
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
             'link' => 'nullable|url',
-            'date' => 'nullable|string', // Kolom Baru
-            'technologies' => 'nullable|string', // Kolom Baru
+            // Wajib diisi agar pengurutan tidak error
+            'date' => 'required|date', 
+            'technologies' => 'nullable|string',
         ]);
 
-        // Upload Gambar
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('projects', 'public');
         }
 
-        // Simpan ke Database
         Project::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'image' => $imagePath,
             'description' => $request->description,
             'link' => $request->link,
-            'date' => $request->date, // Simpan Tanggal
-            'technologies' => $request->technologies, // Simpan Teknologi
+            'date' => $request->date, // Data format YYYY-MM-DD masuk sini
+            'technologies' => $request->technologies,
         ]);
 
         return redirect()->route('projects.index')->with('success', 'Project berhasil ditambahkan!');
@@ -69,11 +69,10 @@ class ProjectController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
             'link' => 'nullable|url',
-            'date' => 'nullable|string',
+            'date' => 'required|date', // Wajib date
             'technologies' => 'nullable|string',
         ]);
 
-        // Cek jika ada gambar baru
         if ($request->hasFile('image')) {
             if ($project->image) {
                 Storage::disk('public')->delete($project->image);
@@ -81,14 +80,13 @@ class ProjectController extends Controller
             $project->image = $request->file('image')->store('projects', 'public');
         }
 
-        // Update Data Lainnya
         $project->title = $request->title;
         $project->slug = Str::slug($request->title);
         $project->description = $request->description;
         $project->link = $request->link;
-        $project->date = $request->date; // Update Tanggal
-        $project->technologies = $request->technologies; // Update Teknologi
-        
+        $project->date = $request->date; 
+        $project->technologies = $request->technologies;
+
         $project->save();
 
         return redirect()->route('projects.index')->with('success', 'Project berhasil diperbarui!');
@@ -101,6 +99,7 @@ class ProjectController extends Controller
             Storage::disk('public')->delete($project->image);
         }
         $project->delete();
+
         return redirect()->route('projects.index')->with('success', 'Project berhasil dihapus!');
     }
 }
