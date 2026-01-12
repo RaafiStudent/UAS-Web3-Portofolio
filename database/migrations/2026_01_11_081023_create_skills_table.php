@@ -7,14 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
-        Schema::create('skills', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');             // Nama Skill (Laravel, CSS)
-            $table->string('color')->default('blue'); // Warna badge (opsional)
-            $table->timestamps();
-        });
-    }
+{
+    Schema::create('skills', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->string('color'); // Warna Border/Text
+        
+        // KOLOM BARU UNTUK LOGO
+        $table->string('image')->nullable(); // Logo Skill (Laravel.png, etc)
+        
+        $table->timestamps();
+    });
+}
 
     public function down(): void
     {
