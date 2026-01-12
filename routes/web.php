@@ -40,12 +40,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD PROJECTS (Nama rutenya: projects.index, projects.create, dll)
+    // CRUD PROJECTS
     Route::resource('admin/projects', ProjectController::class)->names('projects');
 
-    // CRUD SKILLS (Nama rutenya KITA PAKSA jadi: skills.index, skills.create, dll)
-    // Supaya cocok dengan panggilan di navigation.blade.php
+    // CRUD SKILLS
     Route::resource('admin/skills', SkillController::class)->names('skills');
+
+    // CRUD CERTIFICATES (BARU)
+    Route::resource('admin/certificates', \App\Http\Controllers\CertificateController::class)->names('certificates');
 });
 
 require __DIR__.'/auth.php';
