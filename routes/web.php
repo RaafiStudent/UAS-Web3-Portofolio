@@ -2,12 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\SkillController; // Pastikan ini di-import
+use App\Http\Controllers\SkillController;
+use App\Http\Controllers\CertificateController; // Tambahkan ini
 use App\Models\Project;
 use App\Models\Skill;
+use App\Models\Certificate; // Tambahkan ini (PENTING!)
 use Illuminate\Support\Facades\Route;
 
-// HALAMAN PUBLIC (DEPAN)
+// ==========================================
+// HALAMAN PUBLIC (FRONTEND)
+// ==========================================
+
 Route::get('/', function () {
     return view('layout.home', [
         'projects' => Project::all(),
@@ -15,39 +20,47 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/about', function () { return view('layout.about'); })->name('about');
+Route::get('/about', function () { 
+    return view('layout.about'); 
+})->name('about');
+
+// RUTE SKILLS (Kirim data $skills)
 Route::get('/skills', function () { 
     return view('layout.skills', ['skills' => Skill::all()]); 
-})->name('skills'); // INI YANG BIKIN ERROR TADI (SEKARANG SUDAH ADA)
+})->name('skills');
 
+// RUTE PROJECTS (Kirim data $projects)
 Route::get('/projects-list', function () { 
     return view('layout.projects', ['projects' => Project::all()]); 
 })->name('projects');
 
-Route::get('/certificates', function () { return view('layout.certificates'); })->name('certificates');
-Route::get('/contact', function () { return view('layout.kontak'); })->name('contact');
+// RUTE SERTIFIKAT (INI YANG BIKIN ERROR TADI)
+// Sekarang kita kirim data ['certificates' => ...]
+Route::get('/certificates', function () { 
+    return view('layout.certificates', ['certificates' => Certificate::all()]); 
+})->name('certificates');
 
+Route::get('/contact', function () { 
+    return view('layout.kontak'); 
+})->name('contact');
+
+
+// ==========================================
 // HALAMAN ADMIN (DASHBOARD)
+// ==========================================
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// ==========================================
-// GROUP ADMIN (BUTUH LOGIN)
-// ==========================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD PROJECTS
+    // CRUD ADMIN
     Route::resource('admin/projects', ProjectController::class)->names('projects');
-
-    // CRUD SKILLS
     Route::resource('admin/skills', SkillController::class)->names('skills');
-
-    // CRUD CERTIFICATES (BARU)
-    Route::resource('admin/certificates', \App\Http\Controllers\CertificateController::class)->names('certificates');
+    Route::resource('admin/certificates', CertificateController::class)->names('certificates');
 });
 
 require __DIR__.'/auth.php';
