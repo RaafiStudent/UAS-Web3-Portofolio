@@ -37,6 +37,7 @@
                         <tbody>
                             @foreach($projects as $project)
                             <tr class="bg-gray-800 border-b border-gray-700 hover:bg-gray-700 transition">
+                                {{-- GAMBAR --}}
                                 <td class="px-6 py-4">
                                     @if($project->image)
                                         <img src="{{ asset('storage/' . $project->image) }}" class="w-16 h-16 object-cover rounded border border-gray-600">
@@ -44,16 +45,30 @@
                                         <span class="text-red-400">No Image</span>
                                     @endif
                                 </td>
+                                
+                                {{-- JUDUL --}}
                                 <td class="px-6 py-4 font-medium text-white whitespace-nowrap">
                                     {{ $project->title }}
                                 </td>
+                                
+                                {{-- LINK --}}
                                 <td class="px-6 py-4">
-                                    <a href="{{ $project->link }}" target="_blank" class="text-cyan-400 hover:text-cyan-300 hover:underline">Lihat</a>
+                                    @if($project->link)
+                                        <a href="{{ $project->link }}" target="_blank" class="text-cyan-400 hover:text-cyan-300 hover:underline">Lihat</a>
+                                    @else
+                                        -
+                                    @endif
                                 </td>
+                                
+                                {{-- AKSI (EDIT & HAPUS) --}}
                                 <td class="px-6 py-4 flex gap-3">
-                                    <a href="#" class="text-yellow-400 hover:text-yellow-300 font-medium">Edit</a>
-                                    <form action="#" method="POST" onsubmit="return confirm('Yakin hapus?');">
-                                        @csrf @method('DELETE')
+                                    {{-- Tombol Edit (SUDAH DIPERBAIKI) --}}
+                                    <a href="{{ route('projects.edit', $project->id) }}" class="text-yellow-400 hover:text-yellow-300 font-medium">Edit</a>
+                                    
+                                    {{-- Tombol Hapus (SUDAH DIPERBAIKI) --}}
+                                    <form action="{{ route('projects.destroy', $project->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus project ini?');">
+                                        @csrf 
+                                        @method('DELETE')
                                         <button type="submit" class="text-red-500 hover:text-red-400 font-medium">Hapus</button>
                                     </form>
                                 </td>
