@@ -25,77 +25,82 @@ class ProjectController extends Controller
     // 3. SIMPAN DATA BARU (STORE)
     public function store(Request $request)
     {
+        // Validasi
         $request->validate([
             'title' => 'required|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
             'link' => 'nullable|url',
+            'date' => 'nullable|string', // Kolom Baru
+            'technologies' => 'nullable|string', // Kolom Baru
         ]);
 
+        // Upload Gambar
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('projects', 'public');
         }
 
+        // Simpan ke Database
         Project::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title),
             'image' => $imagePath,
             'description' => $request->description,
             'link' => $request->link,
+            'date' => $request->date, // Simpan Tanggal
+            'technologies' => $request->technologies, // Simpan Teknologi
         ]);
 
         return redirect()->route('projects.index')->with('success', 'Project berhasil ditambahkan!');
     }
 
-    // 4. FORM EDIT (EDIT) - FITUR BARU
+    // 4. FORM EDIT (EDIT)
     public function edit(Project $project)
     {
         return view('admin.projects.edit', compact('project'));
     }
 
-    // 5. UPDATE DATA (UPDATE) - FITUR BARU
+    // 5. UPDATE DATA (UPDATE)
     public function update(Request $request, Project $project)
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Image jadi nullable (opsional)
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string',
             'link' => 'nullable|url',
+            'date' => 'nullable|string',
+            'technologies' => 'nullable|string',
         ]);
 
-        // Cek jika ada gambar baru diupload
+        // Cek jika ada gambar baru
         if ($request->hasFile('image')) {
-            // Hapus gambar lama dulu
             if ($project->image) {
                 Storage::disk('public')->delete($project->image);
             }
-            // Upload gambar baru
-            $imagePath = $request->file('image')->store('projects', 'public');
-            $project->image = $imagePath;
+            $project->image = $request->file('image')->store('projects', 'public');
         }
 
-        // Update data lainnya
+        // Update Data Lainnya
         $project->title = $request->title;
         $project->slug = Str::slug($request->title);
         $project->description = $request->description;
         $project->link = $request->link;
+        $project->date = $request->date; // Update Tanggal
+        $project->technologies = $request->technologies; // Update Teknologi
+        
         $project->save();
 
         return redirect()->route('projects.index')->with('success', 'Project berhasil diperbarui!');
     }
 
-    // 6. HAPUS DATA (DESTROY) - FITUR BARU
+    // 6. HAPUS DATA (DESTROY)
     public function destroy(Project $project)
     {
-        // Hapus file gambar dari penyimpanan
         if ($project->image) {
             Storage::disk('public')->delete($project->image);
         }
-
-        // Hapus data dari database
         $project->delete();
-
         return redirect()->route('projects.index')->with('success', 'Project berhasil dihapus!');
     }
 }
