@@ -28,13 +28,22 @@
                         {{ __('Kelola Project') }}
                     </a>
 
-                    {{-- KELOLA SKILL LINK (BARU DITAMBAHKAN) --}}
+                    {{-- KELOLA SKILL LINK --}}
                     <a href="{{ route('skills.index') }}" 
                        class="{{ request()->routeIs('skills.*') 
                            ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
                            : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} 
                            px-4 py-2 rounded-md text-sm font-bold transition duration-150 ease-in-out">
                         {{ __('Kelola Skill') }}
+                    </a>
+
+                    {{-- KELOLA SERTIFIKAT LINK (INI YANG BARU) --}}
+                    <a href="{{ route('certificates.index') }}" 
+                       class="{{ request()->routeIs('certificates.*') 
+                           ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
+                           : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} 
+                           px-4 py-2 rounded-md text-sm font-bold transition duration-150 ease-in-out">
+                        {{ __('Kelola Sertifikat') }}
                     </a>
 
                 </div>
@@ -91,6 +100,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('skills.index')" :active="request()->routeIs('skills.*')" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400">
                 {{ __('Kelola Skill') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('certificates.index')" :active="request()->routeIs('certificates.*')" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400">
+                {{ __('Kelola Sertifikat') }}
             </x-responsive-nav-link>
         </div>
     </div>
