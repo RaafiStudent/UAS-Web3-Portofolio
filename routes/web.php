@@ -3,23 +3,22 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SkillController;
-use App\Http\Controllers\CertificateController; // Tambahkan ini
+use App\Http\Controllers\CertificateController;
 use App\Models\Project;
 use App\Models\Skill;
-use App\Models\Certificate; // Tambahkan ini (PENTING!)
+use App\Models\Certificate;
 use Illuminate\Support\Facades\Route;
 
-// ==========================================
-// HALAMAN PUBLIC (FRONTEND)
-// ==========================================
 // ==========================================
 // HALAMAN PUBLIC (FRONTEND)
 // ==========================================
 
 Route::get('/', function () {
     return view('layout.home', [
-        // Gunakan latest() supaya yang tampil di Home adalah yang BARU diinput
-        'projects' => Project::latest()->get(), 
+        // PERBAIKAN DI SINI:
+        // Ubah latest() menjadi orderBy('date', 'desc')
+        // Agar urut berdasarkan Tanggal Proyek, bukan waktu upload
+        'projects' => Project::orderBy('date', 'desc')->get(), 
         'skills' => Skill::all()
     ]);
 })->name('home');
@@ -33,12 +32,14 @@ Route::get('/skills', function () {
 })->name('skills');
 
 Route::get('/projects-list', function () { 
-    // Di halaman list project juga kita urutkan dari yang terbaru
-    return view('layout.projects', ['projects' => Project::latest()->get()]); 
+    // PERBAIKAN DI SINI JUGA:
+    // Pastikan halaman list project juga urut sesuai tanggal
+    return view('layout.projects', ['projects' => Project::orderBy('date', 'desc')->get()]); 
 })->name('projects');
 
 Route::get('/certificates', function () { 
-    // Sertifikat juga bagusnya dari yang terbaru
+    // Kalau sertifikat mau urut waktu upload, biarkan latest(). 
+    // Kalau sertifikat punya kolom tanggal juga, ganti jadi orderBy('date', 'desc')
     return view('layout.certificates', ['certificates' => Certificate::latest()->get()]); 
 })->name('certificates');
 
