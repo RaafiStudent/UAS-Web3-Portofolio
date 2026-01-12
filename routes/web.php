@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('layout.home', [
-        // PERBAIKAN DI SINI:
-        // Ubah latest() menjadi orderBy('date', 'desc')
-        // Agar urut berdasarkan Tanggal Proyek, bukan waktu upload
+        // Project urut tanggal (Terbaru ke Terlama)
         'projects' => Project::orderBy('date', 'desc')->get(), 
         'skills' => Skill::all()
     ]);
@@ -32,15 +30,15 @@ Route::get('/skills', function () {
 })->name('skills');
 
 Route::get('/projects-list', function () { 
-    // PERBAIKAN DI SINI JUGA:
-    // Pastikan halaman list project juga urut sesuai tanggal
+    // Halaman list project urut tanggal
     return view('layout.projects', ['projects' => Project::orderBy('date', 'desc')->get()]); 
 })->name('projects');
 
 Route::get('/certificates', function () { 
-    // Kalau sertifikat mau urut waktu upload, biarkan latest(). 
-    // Kalau sertifikat punya kolom tanggal juga, ganti jadi orderBy('date', 'desc')
-    return view('layout.certificates', ['certificates' => Certificate::latest()->get()]); 
+    // PERUBAHAN PENTING DISINI:
+    // Sertifikat sekarang diurutkan berdasarkan kolom 'date' (Terbaru ke Terlama)
+    // Bukan lagi berdasarkan waktu upload (latest)
+    return view('layout.certificates', ['certificates' => Certificate::orderBy('date', 'desc')->get()]); 
 })->name('certificates');
 
 Route::get('/contact', function () { 
@@ -52,7 +50,7 @@ Route::get('/contact', function () {
 // HALAMAN ADMIN (DASHBOARD)
 // ==========================================
 Route::get('/dashboard', function () {
-    // Hitung jumlah data
+    // Hitung jumlah data untuk statistik dashboard
     $totalProjects = Project::count();
     $totalSkills = Skill::count();
     $totalCertificates = Certificate::count();
@@ -65,7 +63,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // CRUD ADMIN
+    // CRUD ADMIN (Resource Routes)
     Route::resource('admin/projects', ProjectController::class)->names('projects');
     Route::resource('admin/skills', SkillController::class)->names('skills');
     Route::resource('admin/certificates', CertificateController::class)->names('certificates');
