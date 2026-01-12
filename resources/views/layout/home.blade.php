@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout title="Home">
     {{-- HERO SECTION --}}
     <section class="relative bg-[#0B0F19] text-white py-32 overflow-hidden">
         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-cyan-900/20 to-purple-900/20"></div>
