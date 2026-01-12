@@ -10,17 +10,21 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up(): void
-{
-    Schema::create('certificates', function (Blueprint $table) {
-        $table->id();
-        $table->string('title');        // Judul Sertifikat
-        $table->string('issuer');       // Penyelenggara (BNSP, Sololearn, dll)
-        $table->string('issued_at');    // Tanggal (Kita pakai string biar bisa tulis "Juli 2025" atau rentang waktu)
-        $table->text('description');    // Deskripsi sertifikat
-        $table->string('image');        // File Gambar
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('certificates', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('image');
+            $table->text('description');
+            
+            // INI YANG DITAMBAHKAN (KOLOM TANGGAL)
+            $table->date('date')->nullable(); 
+            
+            $table->string('issuer')->nullable(); // Penerbit
+            $table->string('link')->nullable();   // Link kredensial
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
