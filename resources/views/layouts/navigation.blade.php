@@ -10,7 +10,7 @@
 
                 <div class="hidden space-x-4 sm:-my-px sm:ms-10 sm:flex items-center">
                     
-                    {{-- DASHBOARD LINK --}}
+                    {{-- DASHBOARD --}}
                     <a href="{{ route('dashboard') }}" 
                        class="{{ request()->routeIs('dashboard') 
                            ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
@@ -19,7 +19,7 @@
                         {{ __('Dashboard') }}
                     </a>
 
-                    {{-- KELOLA PROJECT LINK --}}
+                    {{-- KELOLA PROJECT --}}
                     <a href="{{ route('projects.index') }}" 
                        class="{{ request()->routeIs('projects.*') 
                            ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
@@ -28,7 +28,7 @@
                         {{ __('Kelola Project') }}
                     </a>
 
-                    {{-- KELOLA SKILL LINK --}}
+                    {{-- KELOLA SKILL --}}
                     <a href="{{ route('skills.index') }}" 
                        class="{{ request()->routeIs('skills.*') 
                            ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
@@ -37,13 +37,29 @@
                         {{ __('Kelola Skill') }}
                     </a>
 
-                    {{-- KELOLA SERTIFIKAT LINK (INI YANG BARU) --}}
+                    {{-- KELOLA SERTIFIKAT --}}
                     <a href="{{ route('certificates.index') }}" 
                        class="{{ request()->routeIs('certificates.*') 
                            ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
                            : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} 
                            px-4 py-2 rounded-md text-sm font-bold transition duration-150 ease-in-out">
                         {{ __('Kelola Sertifikat') }}
+                    </a>
+
+                    {{-- PESAN MASUK (BARU) --}}
+                    <a href="{{ route('admin.contacts') }}" 
+                       class="{{ request()->routeIs('admin.contacts') 
+                           ? 'bg-gray-800 text-cyan-400 border border-gray-700' 
+                           : 'text-gray-300 hover:bg-gray-800 hover:text-white' }} 
+                           px-4 py-2 rounded-md text-sm font-bold transition duration-150 ease-in-out flex items-center gap-2">
+                        {{ __('Pesan Masuk') }}
+                        
+                        {{-- Badge Notifikasi Merah --}}
+                        @if(\App\Models\Contact::count() > 0)
+                            <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                {{ \App\Models\Contact::count() }}
+                            </span>
+                        @endif
                     </a>
 
                 </div>
@@ -64,13 +80,13 @@
 
                     <x-slot name="content">
                         <div class="bg-gray-800 text-white"> 
-                            <x-dropdown-link :href="route('profile.edit')" class="text-gray-700 hover:bg-gray-100">
+                            <x-dropdown-link :href="route('profile.edit')" class="text-gray-300 hover:bg-gray-700 hover:text-white">
                                 {{ __('Profile') }}
                             </x-dropdown-link>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <x-dropdown-link :href="route('logout')"
-                                        onclick="event.preventDefault(); this.closest('form').submit();" class="text-gray-700 hover:bg-gray-100">
+                                        onclick="event.preventDefault(); this.closest('form').submit();" class="text-gray-300 hover:bg-gray-700 hover:text-white">
                                     {{ __('Log Out') }}
                                 </x-dropdown-link>
                             </form>
@@ -90,6 +106,7 @@
         </div>
     </div>
 
+    {{-- MOBILE MENU --}}
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-[#0B0F19] border-b border-gray-800">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400">
@@ -104,6 +121,37 @@
             <x-responsive-nav-link :href="route('certificates.index')" :active="request()->routeIs('certificates.*')" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400">
                 {{ __('Kelola Sertifikat') }}
             </x-responsive-nav-link>
+            
+            {{-- Pesan Masuk Mobile --}}
+            <x-responsive-nav-link :href="route('admin.contacts')" :active="request()->routeIs('admin.contacts')" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400 flex justify-between items-center pr-4">
+                {{ __('Pesan Masuk') }}
+                @if(\App\Models\Contact::count() > 0)
+                    <span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                        {{ \App\Models\Contact::count() }}
+                    </span>
+                @endif
+            </x-responsive-nav-link>
+        </div>
+
+        <div class="pt-4 pb-1 border-t border-gray-800">
+            <div class="px-4">
+                <div class="font-medium text-base text-gray-200">{{ Auth::user()->name }}</div>
+                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
+            </div>
+
+            <div class="mt-3 space-y-1">
+                <x-responsive-nav-link :href="route('profile.edit')" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400">
+                    {{ __('Profile') }}
+                </x-responsive-nav-link>
+
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <x-responsive-nav-link :href="route('logout')"
+                            onclick="event.preventDefault(); this.closest('form').submit();" class="text-gray-300 hover:bg-gray-800 hover:text-cyan-400">
+                        {{ __('Log Out') }}
+                    </x-responsive-nav-link>
+                </form>
+            </div>
         </div>
     </div>
 </nav>
